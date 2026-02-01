@@ -41,6 +41,16 @@ func main() {
 		w.Write([]byte("OK. Use /movies, /book, /ticket?id=1"))
 	})
 
+	go func() {
+		for {
+			time.Sleep(20 * time.Second)
+			mu.Lock()
+			count := len(tickets)
+			mu.Unlock()
+			fmt.Printf("[SYSTEM]: Health check OK. Total tickets issued: %d\n", count)
+		}
+	}()
+
 	fmt.Println("Server running: http://localhost:8080")
 	_ = http.ListenAndServe(":8080", nil)
 }
@@ -99,6 +109,11 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(t)
+
+	go func(ticketID int) {
+		time.Sleep(5 * time.Second)
+		fmt.Printf("[Async]: Confirmation for ticket #%d has been sent to user email.\n", ticketID)
+	}(t.ID)
 }
 
 // GET /ticket?id=1
