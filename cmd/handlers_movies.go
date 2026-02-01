@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Final_1/internal/models"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -35,7 +36,7 @@ func (h *MovieHandler) Movies(w http.ResponseWriter, r *http.Request) {
 		return
 
 	case http.MethodPost:
-		var m Movie
+		var m models.Movie
 		if err := readJSON(r, &m); err != nil {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid JSON"})
 			return

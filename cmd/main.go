@@ -25,10 +25,16 @@ var (
 )
 
 func main() {
+
+	store := NewMovieStore()
+	h := NewMovieHandler(store)
 	// 3 endpoints
-	http.HandleFunc("/movies", moviesHandler) // GET
-	http.HandleFunc("/book", bookHandler)     // POST
-	http.HandleFunc("/ticket", ticketHandler) // GET ?id=1
+	http.HandleFunc("/movies-list", moviesHandler) // GET
+	http.HandleFunc("/book", bookHandler)          // POST
+	http.HandleFunc("/ticket", ticketHandler)      // GET ?id=1
+
+	http.HandleFunc("/movies", h.Movies)
+	http.HandleFunc("/movies/", h.MovieByID)
 
 	//корень
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
