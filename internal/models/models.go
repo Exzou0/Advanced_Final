@@ -1,46 +1,46 @@
-package main
+package models
 
 import "time"
 
 type Movie struct {
-	ID       int
-	Title    string
-	Genre    string
-	Duration int
+	ID       int    `json:"id"`
+	Title    string `json:"title"`
+	Genre    string `json:"genre"`
+	Duration int    `json:"duration"`
 }
 
 type Hall struct {
-	ID         int
-	Name       string
-	TotalSeats int
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	TotalSeats int    `json:"total_seats"`
 }
 
 type Seat struct {
-	ID     int
-	HallID int
-	Row    int
-	Number int
+	ID     int `json:"id"`
+	HallID int `json:"hall_id"`
+	Row    int `json:"row"`
+	Number int `json:"number"`
 }
 
 type Session struct {
-	ID      int
-	MovieID int
-	HallID  int
-	Time    time.Time
-	Price   float64
+	ID      int       `json:"id"`
+	MovieID int       `json:"movie_id"`
+	HallID  int       `json:"hall_id"`
+	Time    time.Time `json:"time"`
+	Price   float64   `json:"price"`
 }
 
 type User struct {
-	ID    int
-	Name  string
-	Email string
-	Role  string
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }
 
 type Ticket struct {
-	ID        int
-	SessionID int
-	SeatID    int
-	UserID    int
-	Status    string
+	ID        int    `json:"id"`
+	SessionID int    `json:"session_id"`
+	SeatID    int    `json:"seat_id"`
+	UserID    int    `json:"user_id"`
+	Status    string `json:"status"`
 }
