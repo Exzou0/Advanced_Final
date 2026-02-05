@@ -81,13 +81,10 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ЛОГИКА: Берем цену первого фильма (Avatar) для примера,
-	// чтобы ты увидел свои 2500 в Postman.
 	moviePrice := movies[0].Price
 
-	// Если хочешь, чтобы цена менялась от ID:
 	if req.SessionID == 2 {
-		moviePrice = movies[1].Price // Будет 2600
+		moviePrice = movies[1].Price
 	}
 
 	mu.Lock()
@@ -110,7 +107,7 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 
 	go func(ticketID int, price int) {
 		time.Sleep(5 * time.Second)
-		fmt.Printf("[Async]: Confirmation for ticket #%d sent. Total: %d KZT\n", ticketID, price)
+		fmt.Printf("[System]: Confirmation for ticket #%d sent. Total: %d KZT\n", ticketID, price)
 	}(t.ID, t.Price)
 }
 

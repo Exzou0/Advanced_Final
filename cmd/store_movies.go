@@ -63,6 +63,7 @@ type MoviePatch struct {
 	Title    *string `json:"title"`
 	Genre    *string `json:"genre"`
 	Duration *int    `json:"duration"`
+	Price    *int    `json:"price"`
 }
 
 func (s *MovieStore) Update(id int, p MoviePatch) (models.Movie, error) {
@@ -88,6 +89,12 @@ func (s *MovieStore) Update(id int, p MoviePatch) (models.Movie, error) {
 			return models.Movie{}, errors.New("duration must be > 0")
 		}
 		m.Duration = *p.Duration
+	}
+	if p.Price != nil {
+		if *p.Price < 0 {
+			return models.Movie{}, errors.New("price cannot be negative")
+		}
+		m.Price = *p.Price
 	}
 
 	s.items[id] = m
