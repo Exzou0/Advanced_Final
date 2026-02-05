@@ -11,13 +11,12 @@ import (
 	"Final_1/internal/models"
 )
 
-// In-memory storage
 var (
 	mu sync.Mutex
 
 	movies = []models.Movie{
-		{ID: 1, Title: "Avatar", Genre: "Sci-Fi", Duration: 162},
-		{ID: 2, Title: "Inception", Genre: "Action", Duration: 148},
+		{ID: 1, Title: "Avatar", Genre: "Sci-Fi", Duration: 162, Price: 2500},
+		{ID: 2, Title: "Inception", Genre: "Action", Duration: 148, Price: 2600},
 	}
 
 	tickets      = map[int]models.Ticket{}
@@ -36,7 +35,6 @@ func main() {
 	http.HandleFunc("/movies", h.Movies)
 	http.HandleFunc("/movies/", h.MovieByID)
 
-	//корень
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK. Use /movies, /book, /ticket?id=1"))
 	})
@@ -55,7 +53,6 @@ func main() {
 	_ = http.ListenAndServe(":8080", nil)
 }
 
-// GET /movies
 func moviesHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -65,8 +62,6 @@ func moviesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(movies)
 }
-
-//POST /book
 
 func bookHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -85,9 +80,15 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "bad json", http.StatusBadRequest)
 		return
 	}
+
 	if req.SessionID == 0 || req.SeatID == 0 || req.UserID == 0 {
 		http.Error(w, "session_id, seat_id, user_id required", http.StatusBadRequest)
 		return
+	}
+
+	calculatedPrice := 2000
+	if req.SessionID == 101 {
+		calculatedPrice = 3500
 	}
 
 	mu.Lock()
@@ -97,26 +98,23 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 	t := models.Ticket{
 		ID:        id,
 		SessionID: req.SessionID,
-		SeatID:    req.SeatID,
 		UserID:    req.UserID,
 		Status:    "BOOKED",
+		Price:     calculatedPrice,
 	}
 
 	tickets[id] = t
 	mu.Unlock()
 
-	_ = time.Now()
-
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(t)
 
-	go func(ticketID int) {
+	go func(ticketID int, price int) {
 		time.Sleep(5 * time.Second)
-		fmt.Printf("[Async]: Confirmation for ticket #%d has been sent to user email.\n", ticketID)
-	}(t.ID)
+		fmt.Printf("[Async]: Confirmation for ticket #%d has been sent. Total: %d KZT\n", ticketID, price)
+	}(t.ID, t.Price)
 }
 
-// GET /ticket?id=1
 func ticketHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)

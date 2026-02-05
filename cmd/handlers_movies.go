@@ -57,7 +57,6 @@ func (h *MovieHandler) Movies(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MovieHandler) MovieByID(w http.ResponseWriter, r *http.Request) {
-	// expected: /movies/{id}
 	path := strings.Trim(r.URL.Path, "/")
 	parts := strings.Split(path, "/")
 	if len(parts) != 2 || parts[0] != "movies" {
