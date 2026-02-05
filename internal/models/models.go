@@ -7,6 +7,7 @@ type Movie struct {
 	Title    string `json:"title"`
 	Genre    string `json:"genre"`
 	Duration int    `json:"duration"` // minutes
+	Price    int    `json:"price"`
 }
 
 type Hall struct {
@@ -43,4 +44,5 @@ type Ticket struct {
 	SeatID    int    `json:"seat_id"`
 	UserID    int    `json:"user_id"`
 	Status    string `json:"status"` // booked/paid/cancelled
+	Price     int    `json:"price"`
 }
