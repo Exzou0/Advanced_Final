@@ -32,7 +32,12 @@ func readJSON(r *http.Request, dst any) error {
 func (h *MovieHandler) Movies(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		writeJSON(w, http.StatusOK, h.store.List())
+		movies, err := h.store.GetAll()
+		if err != nil {
+			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		writeJSON(w, http.StatusOK, movies)
 		return
 
 	case http.MethodPost:
@@ -106,4 +111,23 @@ func (h *MovieHandler) MovieByID(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
 		return
 	}
+}
+
+func (h *MovieHandler) GetTopMovies(w http.ResponseWriter, r *http.Request) {
+
+	movies, err := h.store.GetTopRated()
+	if err != nil {
+		http.Error(w, "Failed to get ratings: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	writeJSON(w, http.StatusOK, movies)
+}
+
+func (h *MovieHandler) GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := h.store.GetYearlyStats()
+	if err != nil {
+		http.Error(w, "Analytics internal error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	writeJSON(w, http.StatusOK, stats)
 }

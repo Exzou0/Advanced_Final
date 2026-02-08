@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Ticket</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header class="topbar">
+    <div class="nav">
+        <div class="brand">
+            <div class="logo"></div>
+            <div>
+                <h1>Ticket <span class="badge" id="ticketIdLabel">#?</span></h1>
+                <p>Check your booking</p>
+            </div>
+        </div>
+        <div class="navlinks">
+            <a class="pill" href="index.html">Home</a>
+            <a class="pill" href="movies.html">Movies</a>
+            <a class="pill" href="book.html">Book</a>
+            <a class="pill" href="ticket.html">Ticket</a>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <div class="card">
+        <div class="row">
+            <h2 style="margin:0">Ticket details</h2>
+            <div class="spacer"></div>
+            <a class="btn" href="ticket.html?id=1">#1</a>
+            <a class="btn" href="ticket.html?id=2">#2</a>
+        </div>
+        <div class="hr"></div>
+
+        <div id="ticketBox"></div>
+        <p class="small" style="margin-top:12px">Endpoint: <kbd>GET /ticket?id=1</kbd></p>
+    </div>
+</main>
+
+<div class="modal" id="modal">
+    <div class="box">
+        <div class="row">
+            <h3 id="modalTitle" style="margin:0">Modal</h3>
+            <div class="spacer"></div>
+            <button class="btn" id="modalClose">Close</button>
+        </div>
+        <div class="hr"></div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

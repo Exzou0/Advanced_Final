@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Movies CRUD</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header class="topbar">
+    <div class="nav">
+        <div class="brand">
+            <div class="logo"></div>
+            <div>
+                <h1>Movies</h1>
+                <p>Manage your catalog</p>
+            </div>
+        </div>
+        <div class="navlinks">
+            <a class="pill" href="index.html">Home</a>
+            <a class="pill" href="movies.html">Movies</a>
+            <a class="pill" href="book.html">Book</a>
+            <a class="pill" href="ticket.html">Ticket</a>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <div class="grid">
+        <div class="col-12 card">
+            <div class="row">
+                <h2 style="margin:0">Movies CRUD</h2>
+                <div class="spacer"></div>
+                <input id="search" class="input" style="max-width:320px" placeholder="Search by title / genre / id..." />
+                <button class="btn" id="refreshMovies">Refresh</button>
+                <button class="btn primary" id="createMovie">+ Create</button>
+            </div>
+            <div class="hr"></div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width:70px">ID</th>
+                    <th>Title</th>
+                    <th style="width:140px">Genre</th>
+                    <th style="width:120px">Duration</th>
+                    <th style="width:120px">Price</th>
+                    <th style="width:220px">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="moviesBody"></tbody>
+            </table>
+
+            <p class="small" style="margin-top:12px">
+                Backend endpoints used: <kbd>GET /movies</kbd>, <kbd>POST /movies</kbd>, <kbd>PATCH /movies/:id</kbd>, <kbd>DELETE /movies/:id</kbd>
+            </p>
+        </div>
+    </div>
+</main>
+
+<div class="modal" id="modal">
+    <div class="box">
+        <div class="row">
+            <h3 id="modalTitle" style="margin:0">Modal</h3>
+            <div class="spacer"></div>
+            <button class="btn" id="modalClose">Close</button>
+        </div>
+        <div class="hr"></div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

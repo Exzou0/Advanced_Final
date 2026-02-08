@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Book Ticket</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header class="topbar">
+    <div class="nav">
+        <div class="brand">
+            <div class="logo"></div>
+            <div>
+                <h1>Booking</h1>
+                <p>Create ticket in 1 click</p>
+            </div>
+        </div>
+        <div class="navlinks">
+            <a class="pill" href="index.html">Home</a>
+            <a class="pill" href="movies.html">Movies</a>
+            <a class="pill" href="book.html">Book</a>
+            <a class="pill" href="ticket.html">Ticket</a>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <div class="grid">
+        <div class="col-7 card">
+            <h2>Book a Ticket</h2>
+            <p class="small">Endpoint: <kbd>POST /book</kbd></p>
+            <div class="hr"></div>
+
+            <form id="bookForm" class="grid">
+                <div class="col-12 field">
+                    <label>Session ID</label>
+                    <select id="sessionId">
+                        <option value="1">1 (default)</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+
+                <div class="col-12 field">
+                    <label>Seat ID</label>
+                    <div class="row" style="width:100%">
+                        <button class="btn" type="button" data-step="seat" data-delta="-1">−</button>
+                        <input class="input" id="seatId" type="number" min="1" value="15" style="flex:1" />
+                        <button class="btn" type="button" data-step="seat" data-delta="1">+</button>
+                        <button class="btn" type="button" id="seatRandom">Random</button>
+                    </div>
+                </div>
+
+                <div class="col-12 field">
+                    <label>User ID</label>
+                    <div class="row" style="width:100%">
+                        <button class="btn" type="button" data-step="user" data-delta="-1">−</button>
+                        <input class="input" id="userId" type="number" min="1" value="7" style="flex:1" />
+                        <button class="btn" type="button" data-step="user" data-delta="1">+</button>
+                        <button class="btn" type="button" id="userRandom">Random</button>
+                    </div>
+                </div>
+
+                <div class="col-12 row" style="margin-top:6px">
+                    <button class="btn primary" id="bookBtn" type="submit">Book ticket</button>
+                    <button class="btn" type="button" id="fillExample">Fill example</button>
+                    <div class="spacer"></div>
+                    <a class="btn" href="ticket.html?id=1">Open Ticket #1</a>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="col-5 card soft">
+            <h2>How it works</h2>
+            <p class="small">
+                After you book, you will receive a Ticket JSON. Then open it on the Ticket page using the id.
+            </p>
+            <div class="hr"></div>
+            <p class="small">
+                Tip: if your backend uses different logic for session/price, adjust session choices here.
+            </p>
+        </div>
+    </div>
+</main>
+
+<div class="modal" id="modal">
+    <div class="box">
+        <div class="row">
+            <h3 id="modalTitle" style="margin:0">Modal</h3>
+            <div class="spacer"></div>
+            <button class="btn" id="modalClose">Close</button>
+        </div>
+        <div class="hr"></div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
