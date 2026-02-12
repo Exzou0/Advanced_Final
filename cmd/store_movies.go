@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"strings"
 
 	"Final_1/internal/models"
@@ -167,7 +168,7 @@ type GenreStat struct {
 type YearlyStats struct {
 	TotalMinutes int            `json:"total_minutes"`
 	TotalMovies  int            `json:"total_movies"`
-	TopGenres    []GenreStat    `json:"top_genres"` // Изменили map на слайс []GenreStat
+	TopGenres    []GenreStat    `json:"top_genres"`
 	TopMovies    []models.Movie `json:"top_movies"`
 }
 
@@ -201,7 +202,6 @@ func (s *MovieStore) GetYearlyStats() (YearlyStats, error) {
 		defer rows.Close()
 		for rows.Next() {
 			var gs GenreStat
-			// Сканируем жанр и количество продаж в структуру gs
 			if err := rows.Scan(&gs.Genre, &gs.Count); err == nil {
 				stats.TopGenres = append(stats.TopGenres, gs)
 			}
@@ -209,4 +209,66 @@ func (s *MovieStore) GetYearlyStats() (YearlyStats, error) {
 	}
 
 	return stats, nil
+}
+
+func (s *MovieStore) GetUserByEmail(email string) (*models.User, string, error) {
+	var u models.User
+	var passwordHash string
+
+	query := "SELECT id, name, email, role, password FROM users WHERE email = $1"
+	err := s.db.QueryRow(query, email).Scan(&u.ID, &u.Name, &u.Email, &u.Role, &passwordHash)
+	if err != nil {
+		return nil, "", err
+	}
+	return &u, passwordHash, nil
+}
+
+func (s *MovieStore) CreateUser(name, email, password, role string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	query := "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)"
+	_, err = s.db.Exec(query, name, email, string(hashedPassword), role)
+	return err
+}
+
+func (s *MovieStore) GetTicket(ticketID int, userID int) (models.Ticket, error) {
+	var t models.Ticket
+	query := `SELECT id, session_id, seat_id, user_id, price, status 
+              FROM tickets WHERE id = $1 AND user_id = $2`
+
+	err := s.db.QueryRow(query, ticketID, userID).Scan(
+		&t.ID, &t.SessionID, &t.SeatID, &t.UserID, &t.Price, &t.Status,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return t, errors.New("ticket not found or access denied")
+		}
+		return t, err
+	}
+	return t, nil
+}
+
+func (s *MovieStore) GetAllUserTickets(userID int) ([]models.Ticket, error) {
+	query := `SELECT id, session_id, seat_id, user_id, price, status 
+              FROM tickets WHERE user_id = $1 ORDER BY id DESC`
+
+	rows, err := s.db.Query(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tickets []models.Ticket
+	for rows.Next() {
+		var t models.Ticket
+		if err := rows.Scan(&t.ID, &t.SessionID, &t.SeatID, &t.UserID, &t.Price, &t.Status); err != nil {
+			return nil, err
+		}
+		tickets = append(tickets, t)
+	}
+	return tickets, nil
 }

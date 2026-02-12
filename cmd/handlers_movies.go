@@ -3,6 +3,7 @@ package main
 import (
 	"Final_1/internal/models"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -123,11 +124,44 @@ func (h *MovieHandler) GetTopMovies(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, movies)
 }
 
+type StatsResponse struct {
+	TotalDuration  int      `json:"total_duration"`
+	TotalTickets   int      `json:"total_tickets"`
+	FavoriteGenres []string `json:"favorite_genres"`
+}
+
 func (h *MovieHandler) GetStats(w http.ResponseWriter, r *http.Request) {
-	stats, err := h.store.GetYearlyStats()
+	var stats StatsResponse
+
+	queryStats := `
+        SELECT COALESCE(SUM(m.duration), 0), COUNT(t.id) 
+        FROM tickets t
+        JOIN movies m ON t.session_id = m.id`
+
+	err := h.store.db.QueryRow(queryStats).Scan(&stats.TotalDuration, &stats.TotalTickets)
 	if err != nil {
-		http.Error(w, "Analytics internal error: "+err.Error(), http.StatusInternalServerError)
-		return
+		log.Printf("Error stats: %v", err)
 	}
-	writeJSON(w, http.StatusOK, stats)
+
+	queryGenres := `
+        SELECT m.genre 
+        FROM tickets t
+        JOIN movies m ON t.session_id = m.id
+        GROUP BY m.genre
+        ORDER BY COUNT(t.id) DESC
+        LIMIT 3`
+
+	rows, err := h.store.db.Query(queryGenres)
+	if err == nil {
+		defer rows.Close()
+		for rows.Next() {
+			var g string
+			if err := rows.Scan(&g); err == nil {
+				stats.FavoriteGenres = append(stats.FavoriteGenres, g)
+			}
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(stats)
 }
